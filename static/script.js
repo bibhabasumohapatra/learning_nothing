@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const animalImage = document.getElementById('animalImage');
     const imageComment = document.getElementById('imageComment');
     const fileUpload = document.getElementById('fileUpload');
-    const body = document.body;
     const imageBox = document.querySelector('.box:nth-child(2)');
 
     checkboxes.forEach(checkbox => {
@@ -23,9 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (response.ok) {
                         const data = await response.json();
                         animalImage.innerHTML = `<img src="${data.image}" alt="${animal}">`;
-                        body.style.background = data.colors.body;
                         imageBox.style.backgroundColor = data.colors.box;
                         imageComment.textContent = `This is a ${animal.charAt(0).toUpperCase() + animal.slice(1)}`;
+                        
+                        // Update p5.js sketch settings
+                        updateSketchSettings({
+                            background: data.colors.body,
+                            arcsColor: data.colors.box,
+                            speed: { min: 0.001, max: 0.005 }
+                        });
                     } else {
                         console.error('Failed to fetch animal data');
                     }
@@ -35,8 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 animalImage.innerHTML = '';
                 imageComment.textContent = '';
-                body.style.background = 'linear-gradient(135deg, #6e8efb, #a777e3)';
                 imageBox.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                
+                // Reset p5.js sketch settings
+                updateSketchSettings({
+                    background: "#012d3a",
+                    arcsColor: "#dbf7ff",
+                    speed: { min: 0, max: 0.003 }
+                });
             }
         });
     });
@@ -57,9 +68,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json();
                     animalImage.innerHTML = `<img src="${data.image}" alt="Uploaded image">`;
                     imageComment.textContent = `File: ${data.filename}, Size: ${data.size}, Type: ${data.type}`;
-                    // Reset colors for uploaded images
-                    body.style.background = 'linear-gradient(135deg, #6e8efb, #a777e3)';
                     imageBox.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                    
+                    // Reset p5.js sketch settings for uploaded images
+                    updateSketchSettings({
+                        background: "#012d3a",
+                        arcsColor: "#dbf7ff",
+                        speed: { min: 0, max: 0.003 }
+                    });
                 } else {
                     console.error('Failed to upload image');
                 }
